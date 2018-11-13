@@ -7,6 +7,7 @@ import (
 
 func main() {
 	e := echo.New()
+	e.Static("/", "public")
 	e.GET("/data", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
