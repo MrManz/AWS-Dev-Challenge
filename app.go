@@ -3,10 +3,12 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"github.com/labstack/echo"
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
+	"os"
 )
 
 type Message struct {
@@ -22,9 +24,15 @@ func main() {
 	e := echo.New()
 	e.Static("/", "public")
 	e.GET("/data", func(c echo.Context) error {
+
 		// Connect to database
-		connStr := "postgres://admin_postgres:password@mydbinstance.cl0v5hbertly.us-east-2.rds.amazonaws.com/db01"
-		db, err := sql.Open("postgres", connStr)
+		dbinfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
+			os.Getenv("RDS_HOSTNAME"),
+			os.Getenv("RDS_USERNAME"),
+			os.Getenv("RDS_PASSWORD"),
+			os.Getenv("RDS_DB_NAME"))
+
+		db, err := sql.Open("postgres", dbinfo)
 		checkErr(err)
 
 		// Fire Query
